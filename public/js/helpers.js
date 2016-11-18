@@ -46,6 +46,28 @@ function load_url_code() {
 	}
 }
 
+function add_server_buttons() {
+	saveButton = document.createElement( 'button' );
+	saveButton.style.visibility = 'hidden';
+	saveButton.textContent = 'save';
+	saveButton.addEventListener( 'click', save, false );
+	toolbar.appendChild( saveButton );
+
+	parentButton = document.createElement( 'a' );
+	parentButton.style.visibility = 'hidden';
+	parentButton.textContent = 'parent';
+	parentButton.href = original_version;
+	toolbar.appendChild( parentButton );
+
+	diffButton = document.createElement( 'a' );
+	diffButton.style.visibility = 'hidden';
+	diffButton.textContent = 'diff';
+	diffButton.href = '/';
+	toolbar.appendChild( diffButton );
+
+	set_parent_button('visible');
+}
+
 function set_save_button(visibility) {
 	if(original_code==code.getValue())
 		saveButton.style.visibility = 'hidden';

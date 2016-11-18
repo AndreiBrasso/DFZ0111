@@ -54,8 +54,14 @@
 </head>
 <body>
 
+<link rel="stylesheet" href="css/codemirror.css">
+<link rel="stylesheet" href="css/default.css">
+
 <script src="js/lzma.js"></script>
 <script src='js/jquery.js'></script>
+<script src='js/helpers.js'></script>
+<script src="js/codemirror.js"></script>
+<script src="js/glsl.js"></script>
 
 <script id="example" type="x-shader/x-fragment">#ifdef GL_ES
 precision mediump float;
@@ -346,7 +352,9 @@ void main()
 
 <script>
 
-	var compressor=null;
+	initialize_helper();
+
+	var compressor=initialize_compressor();
 
 	if ( !window.requestAnimationFrame ) {
 
@@ -430,7 +438,44 @@ void main()
 			surface.buffer = gl.createBuffer();
 		}
 
+		// initialize code editor
+		code = CodeMirror(document.body, {
+			lineNumbers: true,
+			matchBrackets: true,
+			indentWithTabs: true,
+			tabSize: 8,
+			indentUnit: 8,
+			mode: "text/x-glsl",
+			onChange: function () {
+				if (compileOnChangeCode) {
+					clearTimeout(compileTimer);
+					compileTimer = setTimeout(compile, 500);
+				}
+			}
+		});
+		code.getWrapperElement().style.display = '';
 
+		resizer.offsetMouseX = 0;
+		resizer.offsetMouseY = 0;
+		resizer.isResizing = false;
+		resizer.currentWidth = 100;
+		resizer.currentHeight = 100;
+		resizer.minWidth = 100;
+		resizer.minHeight = 100;
+		resizer.maxWidth = 100;
+		resizer.maxHeight = 100;
+		resizer.element = document.createElement( 'div' );
+		resizer.element.className = 'resizer';
+		code.getWrapperElement().appendChild(resizer.element);
+
+		resizer.element.addEventListener( 'mousedown', function ( event ) {
+			if (event.button !== 2) {
+				resizer.offsetMouseX = event.clientX - resizer.currentWidth;
+				resizer.offsetMouseY = event.clientY - resizer.currentHeight;
+				resizer.isResizing = true;
+				event.preventDefault();
+			}
+		}, false );
 
 		if (gl) {
 
@@ -478,6 +523,8 @@ void main()
 			clientXLast = clientX;
 			clientYLast = clientY;
 
+			stopHideUI();
+
 			var codeElement, dx, dy;
 
 			parameters.mouseX = clientX / window.innerWidth;
@@ -524,6 +571,9 @@ void main()
 
 		function mouseLeave(event) {
 			settleDown(event);
+
+			if (!isCodeVisible())
+				startHideUITimer();
 		}
 
 		document.addEventListener( 'mouseup', settleDown, false );
@@ -531,6 +581,7 @@ void main()
 
 		onWindowResize();
 		window.addEventListener( 'resize', onWindowResize, false );
+		load_url_code();
 
 		compileScreenProgram();
 
@@ -543,7 +594,41 @@ void main()
 	var hideUITimer;
 	var isUIHidden = false;
 
+	function startHideUITimer () {
 
+		stopHideUITimer();
+		if (!isUIHidden && !isCodeVisible())
+			hideUITimer = window.setTimeout(onHideUITimer, 1000 * 5 );
+
+		function onHideUITimer() {
+
+			stopHideUITimer();
+			if (!isUIHidden && !isCodeVisible()) {
+
+				isUIHidden = true;
+				document.body.style.cursor = 'none';
+			}
+		}
+
+		function stopHideUITimer () {
+
+			if (hideUITimer) {
+
+				window.clearTimeout(hideUITimer);
+				hideUITimer = 0;
+			}
+		}
+	}
+
+	function stopHideUI () {
+
+		if (isUIHidden) {
+
+			isUIHidden = false;
+			document.body.style.cursor = '';
+		}
+		startHideUITimer();
+	}
 
 
 	function computeSurfaceCorners() {
@@ -613,6 +698,7 @@ void main()
 
 			console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
 
+
 			return;
 
 		}
@@ -625,6 +711,7 @@ void main()
 		}
 
 		currentProgram = program;
+
 
 		// Cache uniforms
 
@@ -792,6 +879,7 @@ void main()
 
 			console.error( error );
 
+
 			while (index >= 0) {
 				index = error.indexOf("ERROR: 0:", index);
 				if (index < 0) { break; }
@@ -836,6 +924,11 @@ void main()
 		}
 		if (resizer.currentWidth < resizer.minWidth) { resizer.currentWidth = resizer.minWidth; }
 		if (resizer.currentHeight < resizer.minHeight) { resizer.currentHeight = resizer.minHeight; }
+
+		code.getWrapperElement().style.top = '75px';
+		code.getWrapperElement().style.left = '25px';
+		code.getWrapperElement().style.width = resizer.currentWidth + 'px';
+		code.getWrapperElement().style.height = resizer.currentHeight + 'px';
 
 		canvas.width = window.innerWidth / quality;
 		canvas.height = window.innerHeight / quality;
