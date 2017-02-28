@@ -21,19 +21,42 @@
     <script src="blocks/attribute.b.js"></script>
     <script src="blocks/text_element.b.js"></script>
     <script src="blocks/element_simple.b.js"></script>
+    <script src="blocks/render.b.js"></script>
 
 </head>
 <body>
 <table style="width: 100vw; height: 100vh">
+    <tr height="5%">
+        <td>
+            <div id="components">
+
+                <div id="component_app" style="width:150px; height:30px;background-color:yellow" onclick="">
+                    APP
+                </div>
+
+            </div>
+        </td>
+    </tr>
     <tr>
         <td width="50%">
             <div id="blocklyDiv" style="height: 100%; width: 100%"></div>
         </td>
-        <td width="50%">
-            <div id="root"></div>
-            <div id="codeDiv">
-                <pre>code</pre>
-            </div>
+
+        <td width="50%" height="100%">
+            <table height="100%">
+                <tr style="vertical-align: top">
+                    <td>
+                        <div id="root"></div>
+                    </td>
+                </tr>
+                <tr style="vertical-align: top">
+                    <td>
+                        <div id="codeDiv">
+                            <pre>code</pre>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
 </table>
@@ -342,7 +365,10 @@
     <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
     <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
     <sep></sep>
-    <category id="catLogic" colour="210" name="Custom">
+    <category id="catLogic" colour="0" name="Component Events">
+        <block type="render"></block>
+    </category>
+    <category id="catLogic" colour="210" name="Elements">
         <block type="element_simple"></block>
         <block type="element"></block>
         <block type="attribute"></block>
@@ -351,6 +377,23 @@
 </xml>
 
 <xml id="blocklyDefault" style="display: none">
+
+    <block type="render" inline="true" x="20" y="20">
+        <statement name="RENDER">
+            <block type="element_simple" inline="true">
+                <statement name="elements">
+                    <block type="text_element" inline="true">
+
+                        <value name="text">
+                            <block type="text" inline="true">
+                            </block>
+                        </value>
+                    </block>
+                </statement>
+            </block>
+        </statement>
+    </block>
+
 </xml>
 
 <script type="text/babel">
@@ -362,16 +405,23 @@
     function myUpdateFunction(event) {
         var codeDiv = document.getElementById('codeDiv');
         var codeHolder = document.createElement('pre');
-        var code = document.createTextNode(Blockly.JavaScript.workspaceToCode(workspace));
-        codeHolder.appendChild(code);
-        codeDiv.replaceChild(codeHolder, codeDiv.lastElementChild);
 
-        var Component = eval(Babel.transform(
-                Blockly.JavaScript.workspaceToCode(workspace), {
+        var name = 'App';
+        var code = `class ${name} extends React.Component {\n`;
+        code += `${Blockly.JavaScript.workspaceToCode(workspace)}\n`;
+        code += `}`;
+
+        codeHolder.appendChild(document.createTextNode(code));
+        codeDiv.replaceChild(codeHolder, codeDiv.lastElementChild);
+        window[name] = eval(Babel.transform(
+                code, {
                     presets: ['react']
                 }).code);
         ReactDOM.render(
-                Component,
+                eval(Babel.transform(
+                        `<${name} />`, {
+                            presets: ['react']
+                        }).code),
                 document.getElementById('root')
         );
 
