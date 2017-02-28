@@ -1,0 +1,35 @@
+
+###########################################################
+#
+#                         MalwareScanner
+#
+#
+# Beschreibung:
+# Der MalwareScanner ist Signatur basiert und kann daher nur bekannte Malware finden!
+# Dieser prueft nur Dateien mit bestimmten Endungen, welche nicht binaer sind.
+#
+# Bei wenigen Treffer/Funde (weniger als 3 Stueck), pruefen Sie bitte die Suchmuster, Warnings und Signatur-Version im Detail manuell!
+# Bei Fragen oder nicht gefundener Malware, wenden Sie sich bitte an unsere Technik-Abteilung.
+#
+#
+#
+# Signatur:            2016-05-11 15:36:16 +0200
+# Such-Pfad:           /kunden/428071_80333/webseiten/ 
+# Start-Zeit:          11.05.2016 16:13:47 +0200
+#
+#
+# Alle Ergebnisse OHNE GEWAEHR!!!
+#
+###########################################################
+
+Lese nun alle Verzeichnisse ein........
+Pruefe nun die Files auf Malware.....
+
+0% abgeschlossen.
+
+
+
+
+###########################################################
+##                   100%  FERTIG                        ##
+###########################################################

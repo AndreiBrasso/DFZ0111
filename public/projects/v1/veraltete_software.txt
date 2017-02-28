@@ -1,0 +1,35 @@
+
+SoftwareChecker wurde erfolgreich gestartet... bitte kurz warten....
+
+
+###########################################################
+#
+#                     SoftwareChecker
+#
+#
+# Beschreibung:
+# Der SoftwareChecker kann feststellen ob eine installierte Software veraltet ist.
+# Derzeit koennen 137 Software-Module/Pakete geprueft werden.
+# Software, welche verschluesselt ist oder die Versionsnummer in einer Datenbank speichert, kann nicht geprueft werden.
+# Bei Fragen wenden Sie sich bitte an unsere Technik-Abteilung.
+#
+#
+#
+# Signatur:            762
+# Such-Pfad:           /kunden/428071_80333/webseiten/
+# Funde:               0
+# Such-Module:         alle Module
+# Module gesamt:       137 (Software-Produkte)
+# Start-Zeit:          11.05.2016 16:13:47 +0200
+#
+#
+# Alle Ergebnisse OHNE GEWAEHR!!!
+#
+###########################################################
+
+
+
+
+###########################################################
+##                   100%  FERTIG                        ##
+###########################################################
