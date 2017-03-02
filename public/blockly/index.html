@@ -55,37 +55,29 @@
     </style>
 </head>
 <body>
-<table style="width: 100vw; height: 100vh">
-    <tr height="5%">
-        <td colspan="2">
-            <div id="tabs" class="tab">
-                <a href="javascript:void(0)" class="tablinks" onclick="newWorkspace()"> + </a>
-            </div>
-        </td>
-    </tr>
-    <tr height="95%">
-        <td width="50%">
+<div style="width: 100%; height: 100vh">
+    <div style="height:5%">
+        <div id="tabs" class="tab">
+            <a href="javascript:void(0)" class="tablinks" onclick="newWorkspace()"> + </a>
+        </div>
+    </div>
+    <div style="height:95%;width:100%">
+        <div style="float:left;width:50%;height:100%">
             <div id="blocklyDiv" style="height: 100%; width: 100%"></div>
-        </td>
+        </div>
 
-        <td width="50%" height="100%">
-            <table height="100%">
-                <tr style="vertical-align: top">
-                    <td>
-                        <div id="root"></div>
-                    </td>
-                </tr>
-                <tr style="vertical-align: top">
-                    <td>
-                        <div id="codeDiv">
-                            <pre>code</pre>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+        <div style="float:left;width:50%;height:100%">
+            <div style="overflow:scroll;height:50%">
+                <div id="root"></div>
+            </div>
+            <div style="overflow:scroll;height:50%">
+                <div id="codeDiv">
+                    <pre>code</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <xml id="toolbox" style="display: none">
@@ -462,7 +454,7 @@
             tablinks[i].className = tablinks[i].className.replace(' active', '');
         }
 
-        if (!newTabName ) {
+        if (!newTabName) {
             newTabName = window.prompt('ComponentName', 'NewComponent');
         }
 
