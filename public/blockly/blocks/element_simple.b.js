@@ -25,7 +25,7 @@ Blockly.JavaScript['element_simple'] = function (block) {
         code += '</' + text_type + '>\n';
 
     } else {
-        code += '<' + text_type + '/>\n';
+        code += '<' + text_type + ' />\n';
     }
     return code;
 };

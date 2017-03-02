@@ -23,21 +23,47 @@
     <script src="blocks/element_simple.b.js"></script>
     <script src="blocks/render.b.js"></script>
 
+    <style>
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the links inside the tab */
+        div.tab a {
+            float: left;
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of links on hover */
+        div.tab a:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        div.tab a:focus, .active {
+            background-color: #ccc;
+        }
+    </style>
 </head>
 <body>
 <table style="width: 100vw; height: 100vh">
     <tr height="5%">
-        <td>
-            <div id="components">
-
-                <div id="component_app" style="width:150px; height:30px;background-color:yellow" onclick="">
-                    APP
-                </div>
-
+        <td colspan="2">
+            <div id="tabs" class="tab">
+                <a href="javascript:void(0)" class="tablinks" onclick="newWorkspace()"> + </a>
             </div>
         </td>
     </tr>
-    <tr>
+    <tr height="95%">
         <td width="50%">
             <div id="blocklyDiv" style="height: 100%; width: 100%"></div>
         </td>
@@ -397,16 +423,75 @@
 </xml>
 
 <script type="text/babel">
-    var workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: document.getElementById('toolbox')});
 
+    var ws = {};
+    var currentWorkspace = '';
+
+    function openWorkspace(evt, name) {
+        var i, tablinks;
+        tablinks = document.getElementsByClassName('tablinks');
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
+        }
+        evt.currentTarget.className += " active";
+
+
+        //save
+        if (currentWorkspace !== '') {
+            ws[currentWorkspace] = Blockly.Xml.workspaceToDom(workspace);
+        }
+
+        //switch
+        currentWorkspace = name;
+
+        //load
+        Blockly.mainWorkspace.clear();
+        if (ws[currentWorkspace]) {
+            Blockly.Xml.domToWorkspace(ws[currentWorkspace], workspace);
+        } else {
+            Blockly.Xml.domToWorkspace(defaultBlocks, workspace);
+        }
+
+    }
+
+    function newWorkspace(newTabName) {
+
+        var i, tablinks;
+        tablinks = document.getElementsByClassName('tablinks');
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
+        }
+
+        if (!newTabName ) {
+            newTabName = window.prompt('ComponentName', 'NewComponent');
+        }
+
+        if (!newTabName) {
+            return;
+        }
+
+        var newTab = document.createElement('a');
+        var txt = document.createTextNode(newTabName);
+        newTab.append(txt);
+        newTab.className = 'tablinks active';
+        newTab.setAttribute('href', 'javascript:void(0)');
+        newTab.setAttribute('onclick', 'openWorkspace(event, "' + newTabName + '")');
+
+        document.getElementById('tabs').appendChild(newTab);
+
+        openWorkspace({currentTarget: newTab}, newTabName);
+    }
+
+    var workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: document.getElementById('toolbox')});
     var defaultBlocks = document.getElementById('blocklyDefault');
-    Blockly.Xml.domToWorkspace(defaultBlocks, workspace);
+
+    newWorkspace('App');
 
     function myUpdateFunction(event) {
         var codeDiv = document.getElementById('codeDiv');
         var codeHolder = document.createElement('pre');
 
-        var name = 'App';
+        var name = currentWorkspace;
         var code = `class ${name} extends React.Component {\n`;
         code += `${Blockly.JavaScript.workspaceToCode(workspace)}\n`;
         code += `}`;
