@@ -2,7 +2,80 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Blockly Demo: Fixed Blockly</title>
+    <title>Blockly Demo-</title>
+
+    <style>
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the links inside the tab */
+        div.tab a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        /* Change background color of links on hover */
+        div.tab a:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        div.tab a:focus, .active {
+            background-color: #ccc;
+        }
+    </style>
+
+    <script type="text/javascript" src="http://layout.jquery-dev.com/lib/js/jquery-latest.js"></script>
+    <script type="text/javascript" src="http://layout.jquery-dev.com/lib/js/jquery-ui-latest.js"></script>
+    <script type="text/javascript" src="http://layout.jquery-dev.com/lib/js/jquery.layout-latest.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // OUTER-LAYOUT
+            $('body').layout({
+                center__paneSelector: ".outer-center",
+                center__childOptions: {
+                    center__paneSelector: ".middle-center",
+                    center__childOptions: {
+                        center__paneSelector: ".inner-center",
+                        center__onresize: function(){onresize()},
+                        east__paneSelector: ".inner-east",
+                        east__size: 800,
+                        east__childOptions: {
+                            center__paneSelector: ".preview-center",
+                            south__size: 400
+                        }
+                    },
+
+                    west__paneSelector: ".middle-west",
+                    west__childOptions: {
+                        center__paneSelector: ".components-center",
+
+                        south__paneSelector: ".components-south",
+                        north__size: 250,
+                        south__size: 400,
+                        south__childOptions: {
+                            center__paneSelector: ".state-center"
+                        }
+                    }
+                }
+            });
+
+        });
+
+    </script>
+
+
     <script src="blockly_compressed.js"></script>
     <script src="blocks_compressed.js"></script>
     <script src="javascript_compressed.js"></script>
@@ -16,6 +89,7 @@
     <script src="https://unpkg.com/babel-polyfill@6/dist/polyfill.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="http://layout.jquery-dev.com/lib/css/layout-default-latest.css">
     <!-- https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#a55sif -->
     <script src="blocks/element.b.js"></script>
     <script src="blocks/attribute.b.js"></script>
@@ -23,63 +97,55 @@
     <script src="blocks/element_simple.b.js"></script>
     <script src="blocks/render.b.js"></script>
 
-    <style>
-        /* Style the tab */
-        div.tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-        }
-
-        /* Style the links inside the tab */
-        div.tab a {
-            float: left;
-            display: block;
-            color: black;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            transition: 0.3s;
-            font-size: 17px;
-        }
-
-        /* Change background color of links on hover */
-        div.tab a:hover {
-            background-color: #ddd;
-        }
-
-        /* Create an active/current tablink class */
-        div.tab a:focus, .active {
-            background-color: #ccc;
-        }
-    </style>
 </head>
 <body>
-<div style="width: 100%; height: 100vh">
-    <div style="height:5%">
-        <div id="tabs" class="tab">
-            <a href="javascript:void(0)" class="tablinks" onclick="newWorkspace()"> + </a>
-        </div>
-    </div>
-    <div style="height:95%;width:100%">
-        <div style="float:left;width:50%;height:100%">
-            <div id="blocklyDiv" style="height: 100%; width: 100%"></div>
-        </div>
 
-        <div style="float:left;width:50%;height:100%">
-            <div style="overflow:scroll;height:50%">
+<div class="outer-center">
+
+    <div class="middle-center">
+
+        <div class="ui-layout-north">Options panel</div>
+
+        <div class="inner-center" id="blocklyArea">
+
+        </div>
+        <div class="inner-east">
+            <div class="preview-center">
+                <div>Preview</div>
                 <div id="root"></div>
             </div>
-            <div style="overflow:scroll;height:50%">
+            <div class="ui-layout-south">
+                <div>CODE</div>
                 <div id="codeDiv">
                     <pre>code</pre>
                 </div>
             </div>
         </div>
+
     </div>
+
+    <div class="middle-west">
+
+        <div class="ui-layout-north">
+            <div id="tabs" class="tab">
+                <a href="javascript:void(0)" class="tablinks" onclick="newWorkspace()"> Add Component </a>
+            </div>
+        </div>
+        <div class="components-center">Functions</div>
+        <div class="components-south">
+
+            <div class="ui-layout-north">Props</div>
+            <div class="state-center">State</div>
+
+        </div>
+
+
+    </div>
+
 </div>
 
 
+<div id="blocklyDiv" style="position: absolute"></div>
 <xml id="toolbox" style="display: none">
     <category id="catLogic" colour="210" name="Logic">
         <block type="controls_if"></block>
@@ -383,14 +449,17 @@
     <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
     <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
     <sep></sep>
-    <category id="catLogic" colour="0" name="Component Events">
+    <category colour="0" name="Component Events">
         <block type="render"></block>
     </category>
-    <category id="catLogic" colour="210" name="Elements">
+    <category colour="210" name="Elements">
         <block type="element_simple"></block>
         <block type="element"></block>
         <block type="attribute"></block>
         <block type="text_element"></block>
+    </category>
+    <category id="categoryState" colour="30" name="Component State">
+        <button text="New State Var" callbackKey="addNewState"></button>
     </category>
 </xml>
 
@@ -416,8 +485,19 @@
 
 <script type="text/babel">
 
-    var ws = {};
-    var currentWorkspace = '';
+    var components = {};
+    var componentName = '';
+
+    function addNewState() {
+
+        var newState = window.prompt('New state', 'name');
+
+        if (!newState) {
+            return;
+        }
+
+
+    }
 
     function openWorkspace(evt, name) {
         var i, tablinks;
@@ -429,17 +509,17 @@
 
 
         //save
-        if (currentWorkspace !== '') {
-            ws[currentWorkspace] = Blockly.Xml.workspaceToDom(workspace);
+        if (componentName !== '') {
+            components[componentName].workspace = Blockly.Xml.workspaceToDom(workspace);
         }
 
         //switch
-        currentWorkspace = name;
+        componentName = name;
 
         //load
         Blockly.mainWorkspace.clear();
-        if (ws[currentWorkspace]) {
-            Blockly.Xml.domToWorkspace(ws[currentWorkspace], workspace);
+        if (components[componentName].workspace) {
+            Blockly.Xml.domToWorkspace(components[componentName].workspace, workspace);
         } else {
             Blockly.Xml.domToWorkspace(defaultBlocks, workspace);
         }
@@ -462,6 +542,8 @@
             return;
         }
 
+        components[newTabName] = {};
+
         var newTab = document.createElement('a');
         var txt = document.createTextNode(newTabName);
         newTab.append(txt);
@@ -474,7 +556,9 @@
         openWorkspace({currentTarget: newTab}, newTabName);
     }
 
-    var workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: document.getElementById('toolbox')});
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var workspace = Blockly.inject(blocklyDiv, {media: 'media/', toolbox: document.getElementById('toolbox')});
     var defaultBlocks = document.getElementById('blocklyDefault');
 
     newWorkspace('App');
@@ -483,7 +567,7 @@
         var codeDiv = document.getElementById('codeDiv');
         var codeHolder = document.createElement('pre');
 
-        var name = currentWorkspace;
+        var name = componentName;
         var code = `class ${name} extends React.Component {\n`;
         code += `${Blockly.JavaScript.workspaceToCode(workspace)}\n`;
         code += `}`;
@@ -504,6 +588,21 @@
 
     }
     workspace.addChangeListener(myUpdateFunction);
+
+    var onresize = function(e) {
+        // Compute the absolute coordinates and dimensions of blocklyArea.
+        var element = blocklyArea;
+
+        // Position blocklyDiv over blocklyArea.
+        blocklyDiv.style.left = $(element).offset().left + 'px';
+        blocklyDiv.style.top = $(element).offset().top + 'px';
+        blocklyDiv.style.width = $(element).width() + 'px';
+        blocklyDiv.style.height = $(element).height() + 'px';
+
+        Blockly.svgResize(workspace);
+    };
+    window.addEventListener('resize', onresize, false);
+    onresize();
 
 </script>
 
